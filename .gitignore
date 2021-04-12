@@ -1,0 +1,18 @@
+# Ignore compressed files.
+*.tar
+*.gz
+*.zip
+
+# Ignore SQL files.
+*.sql
+*.mysql
+
+# Ignore .env files as they are personal
+.env
+
+# Ignore Cypress environment variables
+cypress.*.json
+
+# Ignore IDE files.
+.idea
+docroot/web/sites/*/files/

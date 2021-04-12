@@ -1,0 +1,40 @@
+version: '3'
+services:
+  db:
+    image: mysql
+    command: --default-authentication-plugin=mysql_native_password
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./db-backups:/var/mysql/backups:delegated
+      - ./db-backups/conf:/docker-entrypoint-initdb.d/:ro
+    environment:
+      MYSQL_ROOT_PASSWORD: myroot
+      MYSQL_DATABASE: drupaltest
+
+  web:
+    image: osiolabs/drupaldevwithdocker-php
+    build:
+      context: ./
+    depends_on:
+      - db
+    # command: bash -c "/usr/wait-for-it.sh --timeout=0 db:3306 && scripts/install-script.sh"
+    ports:
+      - "8002:80"
+    volumes:
+      - ./docroot:/var/www:cached
+      - ./scripts:/var/www/scripts:cached
+    environment:
+      APACHE_DOCROOT_DIR: /var/www/web
+      
+  pma:
+    image: phpmyadmin/phpmyadmin
+    ports:
+      - "8001:80"
+    environment:
+      PMA_HOST: db
+      PMA_USER: root
+      PMA_PASSWORD: myroot
+      PHP_UPLOAD_MAX_FILESIZE: 1G
+      PHP_MAX_INPUT_VARS: 1G 
+
